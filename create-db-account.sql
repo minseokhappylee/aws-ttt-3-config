@@ -1,0 +1,11 @@
+DROP USER IF EXISTS 'order-svc'@'%';
+DROP DATABASE IF EXISTS `order`;
+CREATE USER 'order-svc'@'%' IDENTIFIED BY 'order-pass' PASSWORD EXPIRE NEVER;
+CREATE DATABASE `order`;
+GRANT ALL PRIVILEGES ON `order`.* TO 'order-svc'@'%';
+
+DROP USER IF EXISTS 'gift-svc'@'%';
+DROP DATABASE IF EXISTS `gift`;
+CREATE USER 'gift-svc'@'%' IDENTIFIED BY 'gift-pass' PASSWORD EXPIRE NEVER;
+CREATE DATABASE `gift`;
+GRANT ALL PRIVILEGES ON `gift`.* TO 'gift-svc'@'%';

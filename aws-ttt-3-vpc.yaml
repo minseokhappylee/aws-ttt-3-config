@@ -1,0 +1,272 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "SK C&C Telecom Operation AWS TTT Team 3 VPC Template"
+Resources:
+  AwsTtt3Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.31.0.0/16
+      Tags:
+        - Key: stack
+          Value: production
+        - Key: Name
+          Value: aws-ttt-3-vpc
+  AwsTtt3VpcAddCidrBlock:
+    Type: AWS::EC2::VPCCidrBlock
+    Properties:
+      CidrBlock: 100.64.0.0/16
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreatePublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-2a"
+      CidrBlock: 172.31.0.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-ttt-3-public-subnet-a
+        - Key: stack
+          Value: production
+        - Key: access
+          Value: public
+        - Key: order
+          Value: "1"
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreatePublicSubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-2c"
+      CidrBlock: 172.31.2.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-ttt-3-public-subnet-c
+        - Key: stack
+          Value: production
+        - Key: access
+          Value: public
+        - Key: order
+          Value: "2"
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreatePrivateSubnetA1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-2a"
+      CidrBlock: 100.64.0.0/20
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-ttt-3-private-subnet-a1
+        - Key: stack
+          Value: production
+        - Key: access
+          Value: private
+        - Key: order
+          Value: "3"
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3VpcAddCidrBlock
+  AwsTtt3CreatePrivateSubnetC1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-2c"
+      CidrBlock: 100.64.32.0/20
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-ttt-3-private-subnet-c1
+        - Key: access
+          Value: public
+        - Key: order
+          Value: "4"
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3VpcAddCidrBlock
+  AwsTtt3CreatePrivateSubnetA2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-2a"
+      CidrBlock: 100.64.64.0/20
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-ttt-3-private-subnet-a2
+        - Key: stack
+          Value: production
+        - Key: access
+          Value: private
+        - Key: order
+          Value: "5"
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3VpcAddCidrBlock
+  AwsTtt3CreatePrivateSubnetC2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-2c"
+      CidrBlock: 100.64.96.0/20
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-ttt-3-private-subnet-c2
+        - Key: stack
+          Value: production
+        - Key: access
+          Value: public
+        - Key: order
+          Value: "6"
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3VpcAddCidrBlock
+  AwsTtt3CreateRouteTablePublic:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "aws-ttt-3-route-table-public"
+        - Key: access
+          Value: public
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreateRouteTablePrivateA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "aws-ttt-3-route-table-private-a"
+        - Key: access
+          Value: private
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreateRouteTablePrivateC:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "aws-ttt-3-route-table-private-c"
+        - Key: access
+          Value: private
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreateInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "aws-ttt-3-create-internet-gateway"
+  AwsTtt3AttachInternetGatewayToVpc:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref AwsTtt3CreateInternetGateway
+      VpcId: !Ref AwsTtt3Vpc
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreateEIP:
+    Type: AWS::EC2::EIP
+    Properties: 
+      Tags: 
+        - Key: Name
+          Value: "aws-ttt-3-eip"
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreateNatGatewayA:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt AwsTtt3CreateEIP.AllocationId
+      ConnectivityType: "public"
+      SubnetId: !Ref AwsTtt3CreatePublicSubnetA
+      Tags:
+        - Key: Name
+          Value: "aws-ttt-3-nat-gateway-a"
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreatePublicSubnetA
+      - AwsTtt3CreateEIP
+  AwsTtt3CreateNatGatewayC:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt AwsTtt3CreateEIP.AllocationId
+      ConnectivityType: "public"
+      SubnetId: !Ref AwsTtt3CreatePublicSubnetA
+      Tags:
+        - Key: Name
+          Value: "aws-ttt-3-nat-gateway-c"
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreatePublicSubnetC
+      - AwsTtt3CreateEIP
+  AwsTtt3AddRouteTablePrivateA:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePrivateA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref AwsTtt3CreateNatGatewayA
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePrivateA
+  AwsTtt3AddRouteTablePrivateC:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePrivateC
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref AwsTtt3CreateNatGatewayC
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePrivateC
+  AwsTtt3AddRouteTablePublic:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePublic
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref AwsTtt3CreateInternetGateway
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePublic
+  AwsTtt3AddSubnetPublicARouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePublic
+      SubnetId: !Ref AwsTtt3CreatePublicSubnetA
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePublic
+      - AwsTtt3CreatePublicSubnetA
+  AwsTtt3AddSubnetPublicCRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePublic
+      SubnetId: !Ref AwsTtt3CreatePublicSubnetC
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePublic
+      - AwsTtt3CreatePublicSubnetC
+  AwsTtt3AddSubnetPrivateA1RouteTableA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePrivateA
+      SubnetId: !Ref AwsTtt3CreatePrivateSubnetA1
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePrivateA
+      - AwsTtt3CreatePrivateSubnetA1
+  AwsTtt3AddSubnetPrivateC1RouteTableC:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePrivateC
+      SubnetId: !Ref AwsTtt3CreatePrivateSubnetC1
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePrivateC
+      - AwsTtt3CreatePrivateSubnetC1

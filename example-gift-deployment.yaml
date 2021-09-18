@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-gift
+  labels:
+    app: example-gift
+  namespace: aws-ttt-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example-gift
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: example-gift
+    spec:
+      containers:
+      - image: 734268896595.dkr.ecr.ap-northeast-2.amazonaws.com/example-gift:latest
+        imagePullPolicy: Always
+        name: example-gift
+        command: 
+        - "java"
+        - "-jar"
+        - "/app.war"
+        - "--spring.datasource.hikari.jdbc-url=jdbc:mysql://aws-ttt-3-db-instance-1.cgt4zl5rdd9h.ap-northeast-2.rds.amazonaws.com:3306/gift?serverTimezone=UTC&characterEncoding=UTF-8"
+        - "--spring.datasource.hikari.username=gift-svc"
+        - "--spring.datasource.hikari.password=gift-pass"
+        - "--spring.flyway.url=jdbc:mysql://aws-ttt-3-db-instance-1.cgt4zl5rdd9h.ap-northeast-2.rds.amazonaws.com:3306/gift?serverTimezone=UTC&characterEncoding=UTF-8"
+        - "--spring.flyway.username=gift-svc"
+        - "--spring.flyway.password=gift-pass"
+        - "--example.order.base-url=http://a695a4aeb7e7c48c59e01b3ac9d6045d-1468597041.ap-northeast-2.elb.amazonaws.com"
+        ports:
+          - containerPort: 18080
+            protocol: TCP
+        env:            
+          - name: cloud.aws.access-key
+            valueFrom:
+              secretKeyRef:
+                name: aws-ttt-3-secret 
+                key: aws-access-key-id
+          - name: cloud.aws.secret-key
+            valueFrom:
+              secretKeyRef:
+                name: aws-ttt-3-secret 
+                key: aws-secret-access-key
+        

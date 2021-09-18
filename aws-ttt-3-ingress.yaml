@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "aws-ttt-3-ingress"
+  namespace: "aws-ttt-3"
+  labels:
+    app.kubernetes.io/name: "aws-ttt-3-ingress"
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/subnets: 	subnet-05346cb201d82c197,subnet-0a7eb6ba778bd2ee7
+    alb.ingress.kubernetes.io/target-type: instance
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: "/"
+            backend:
+              serviceName: "example-order"
+              servicePort: 80
+          - path: "/*/v*/items/*"
+            backend:
+              serviceName: "example-order"
+              servicePort: 80
+          - path: "/*/v*/orders/*"
+            backend:
+              serviceName: "example-order"
+              servicePort: 80
+          - path: "/*/v*/partners/*"
+            backend:
+              serviceName: "example-order"
+              servicePort: 80
+          - path: "/*/v*/gift/*"
+            backend:
+              serviceName: "example-gift"
+              servicePort: 80

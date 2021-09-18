@@ -1,0 +1,40 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: aws-ttt-3-cluster
+  region: ap-northeast-2
+  version: "1.21"
+
+vpc:
+  subnets:
+    private:
+      ap-northeast-2a:
+        id: subnet-097a3928a6e93ef1f
+      ap-northeast-2c:
+        id: subnet-089b6755239fdad20
+  clusterEndpoints:
+    privateAccess: true
+    publicAccess: true
+
+cloudWatch:
+  clusterLogging:
+    enableTypes:
+      - "all"
+ 
+secretsEncryption:
+  keyARN: "arn:aws:kms:ap-northeast-2:734268896595:key/b7e7237e-5773-4b77-a36e-e7480ed0cc4d"
+
+managedNodeGroups:
+  - name: aws-ttt-3-node-group
+    instanceType: t2.small
+    minSize: 3
+    desiredCapacity: 3
+    maxSize: 3
+    availabilityZones:
+      - ap-northeast-2a
+      - ap-northeast-2c
+    privateNetworking: true
+    volumeSize: 10
+    iam:
+      instanceRoleARN: "arn:aws:iam::734268896595:role/aws-ttt-3-node-group-role"
