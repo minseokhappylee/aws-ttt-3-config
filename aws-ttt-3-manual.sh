@@ -11,7 +11,7 @@ export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 
 # VPC 생성
-aws cloudformation create-stack --stack-name aws-ttt-3 --template-body file:///home/ubuntu/environment/minseoklee/aws-ttt-3-config/aws-ttt-3.yaml --region ap-northeast-2
+aws cloudformation create-stack --stack-name aws-ttt-3-vpc --template-body file://${PWD}/aws-ttt-3-vpc.yaml --region ap-northeast-2
 
 #DB는 아직 명령어로 생성되도록 만들지 못했음. AWS Management Console에서 UI를 통해 생성할것
 

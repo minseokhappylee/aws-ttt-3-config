@@ -173,18 +173,26 @@ Resources:
       VpcId: !Ref AwsTtt3Vpc
     DependsOn:
       - AwsTtt3Vpc
-  AwsTtt3CreateEIP:
+  AwsTtt3CreateEipA:
     Type: AWS::EC2::EIP
     Properties: 
       Tags: 
         - Key: Name
-          Value: "aws-ttt-3-eip"
+          Value: "aws-ttt-3-eip-a"
+    DependsOn:
+      - AwsTtt3Vpc
+  AwsTtt3CreateEipC:
+    Type: AWS::EC2::EIP
+    Properties: 
+      Tags: 
+        - Key: Name
+          Value: "aws-ttt-3-eip-c"
     DependsOn:
       - AwsTtt3Vpc
   AwsTtt3CreateNatGatewayA:
     Type: AWS::EC2::NatGateway
     Properties:
-      AllocationId: !GetAtt AwsTtt3CreateEIP.AllocationId
+      AllocationId: !GetAtt AwsTtt3CreateEipA.AllocationId
       ConnectivityType: "public"
       SubnetId: !Ref AwsTtt3CreatePublicSubnetA
       Tags:
@@ -193,20 +201,20 @@ Resources:
     DependsOn:
       - AwsTtt3Vpc
       - AwsTtt3CreatePublicSubnetA
-      - AwsTtt3CreateEIP
+      - AwsTtt3CreateEipA
   AwsTtt3CreateNatGatewayC:
     Type: AWS::EC2::NatGateway
     Properties:
-      AllocationId: !GetAtt AwsTtt3CreateEIP.AllocationId
+      AllocationId: !GetAtt AwsTtt3CreateEipC.AllocationId
       ConnectivityType: "public"
-      SubnetId: !Ref AwsTtt3CreatePublicSubnetA
+      SubnetId: !Ref AwsTtt3CreatePublicSubnetC
       Tags:
         - Key: Name
           Value: "aws-ttt-3-nat-gateway-c"
     DependsOn:
       - AwsTtt3Vpc
       - AwsTtt3CreatePublicSubnetC
-      - AwsTtt3CreateEIP
+      - AwsTtt3CreateEipC
   AwsTtt3AddRouteTablePrivateA:
     Type: AWS::EC2::Route
     Properties:
@@ -270,3 +278,21 @@ Resources:
       - AwsTtt3Vpc
       - AwsTtt3CreateRouteTablePrivateC
       - AwsTtt3CreatePrivateSubnetC1
+  AwsTtt3AddSubnetPrivateA2RouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePrivateA
+      SubnetId: !Ref AwsTtt3CreatePrivateSubnetA2
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePrivateA
+      - AwsTtt3CreatePrivateSubnetA2
+  AwsTtt3AddSubnetPrivateA2RouteTableC:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref AwsTtt3CreateRouteTablePrivateC
+      SubnetId: !Ref AwsTtt3CreatePrivateSubnetC2
+    DependsOn:
+      - AwsTtt3Vpc
+      - AwsTtt3CreateRouteTablePrivateC
+      - AwsTtt3CreatePrivateSubnetC2
